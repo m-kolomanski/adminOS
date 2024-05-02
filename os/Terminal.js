@@ -27,9 +27,29 @@ class Terminal {
         // add command to command history //
         document.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
+                // log to terminal history //
                 const command = this.terminal_input.value;
                 this.terminal_input.value = "";
                 this.log(command, "command");
+
+                // parse command //
+                const command_parts = command.split(" ");
+                const command_name = command_parts[0];
+                const command_details = command_parts.slice(1,command_parts.len);
+
+                // check if command exists //
+                if (!system.getCommandHandlersList().includes(command_name)) {
+                    this.log(`Command ${command_name} not found`);
+                    return;
+                }
+
+                // invoke appropriate event //
+                document.dispatchEvent(new CustomEvent(command_name, {
+                    bubbles: true,
+                    detail: command_details
+                }));
+
+
             } 
         });
     }
