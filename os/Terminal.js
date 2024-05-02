@@ -30,7 +30,7 @@ class Terminal {
                 // log to terminal history //
                 const command = this.terminal_input.value;
                 this.terminal_input.value = "";
-                this.log(command, "command");
+                this.command(command);
 
                 // parse command //
                 const command_parts = command.split(" ");
@@ -39,7 +39,7 @@ class Terminal {
 
                 // check if command exists //
                 if (!system.getCommandHandlersList().includes(command_name)) {
-                    this.log(`Command ${command_name} not found`);
+                    this.error(`Command ${command_name} not found`);
                     return;
                 }
 
@@ -53,23 +53,49 @@ class Terminal {
             } 
         });
     }
+    command(message) {
+        const command_line = this.#createLine(message, "command");
+        command_line.innerHTML = this.#parseUserName() + command_line.innerHTML;
+        this.#displayLine(command_line);
+    }
     /**
      * @method log
      * @description Adds a typed command to the terminal history display
      * @param {string} command Command to be added to the terminal history.
-     * @param {string} level   Level of the terminal log.
      */
-    log(message, level = "none") {
+    log(message) {
+        if (typeof message === "string") {
+            message = [message];
+        }
+        message.map(line => {
+            this.#displayLine(this.#createLine(line, "log"))
+        });
+    }
+    warning(message) {
+        if (typeof message === "string") {
+            message = [message];
+        }
+        message.map(line => {
+            this.#displayLine(this.#createLine(line, "warning"))
+        });
+    } 
+    error(message) {
+        if (typeof message === "string") {
+            message = [message];
+        }
+        message.map(line => {
+            this.#displayLine(this.#createLine(line, "error"))
+        });
+    }
+    #createLine(message, level = "log") {
         const line = document.createElement("p");
         line.classList.add("terminal-line");
-
-        if (level === "command") {
-            line.innerHTML = this.#parseUserName();
-        }
-
+        line.classList.add(level);
         line.appendChild(document.createTextNode(message));
-
-        this.terminal_history.appendChild(line);
+        return line;
+    }
+    #displayLine(message) {
+        this.terminal_history.appendChild(message);
     }
     /**
      * @method setUserName

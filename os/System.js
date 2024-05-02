@@ -75,7 +75,7 @@ class System {
 
         document.dispatchEvent(new CustomEvent(details, {
             bubbles: true,
-            detail: "--help"
+            detail: ["--help"]
         }));
     }
     /**
@@ -83,8 +83,9 @@ class System {
      * @param {string} details List of commands
      */
     #handleSystemCall(details) {
-        if (details === "--help") {
-            terminal.log("Advanced help for system not implemented yet");
+        console.log(details);
+        if (details[0] === "--help") {
+            terminal.error("Advanced help for system not implemented yet");
         }
     }
 }
