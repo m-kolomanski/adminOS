@@ -1,4 +1,8 @@
+var system, terminal;
+
 class System {
+    is_admin_logged_in = false
+
     constructor() {
         console.log("Initializing System...");
 
@@ -8,9 +12,14 @@ class System {
             <div id='terminal-container'></div>
         `;
 
-        new Terminal();
+        terminal = new Terminal();
 
+        terminal.setUserName("user", "adminOS");
+
+        terminal.log("Hello and welcome to adminOS!");
+        terminal.log("You can log in to your admin account using the 'login [username] [password]' command.");
+        terminal.log("To get basic help use the 'help' command.");
     }
 }
 
-const system = new System();
+system = new System();
