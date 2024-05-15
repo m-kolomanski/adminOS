@@ -1,7 +1,6 @@
 var system, terminal;
 
 class System {
-    #is_admin_logged_in = false
     #registered_commands = [];
 
     constructor() {
@@ -17,9 +16,11 @@ class System {
 
         terminal.setUserName("user", "adminOS");
 
-        terminal.log("Hello and welcome to adminOS!");
-        terminal.log("You can log in to your admin account using the 'login [username] [password]' command.");
-        terminal.log("To get basic help use the 'help system' command.");
+        terminal.log([
+            "Hello and welcome to adminOS!",
+            "You can log in to your admin account using the 'login [username] [password]' command.",
+            "To get basic help use the 'help system' command."
+        ]);
 
         this.#registerCommandHandlers();
     }
@@ -31,6 +32,7 @@ class System {
      */
     registerCommandHandler(name, callback_fn) {
         if (this.#registered_commands.includes(name)) {
+            terminal.error(`Plugin conflict detected, failed to register ${name} command handler. Unexpected behaviour may occur.`)
             throw new Error("Handler for this command already exists.");
         }
 
@@ -55,6 +57,7 @@ class System {
     #registerCommandHandlers() {
         this.registerCommandHandler("help", this.#handleHelpCall.bind(this));
         this.registerCommandHandler("system", this.#handleSystemCall.bind(this));
+        this.registerCommandHandler("login", this.#handleLoginCall.bind(this));
     }
     /**
      * @method handleHelpCall
@@ -86,6 +89,16 @@ class System {
         console.log(details);
         if (details[0] === "--help") {
             terminal.error("Advanced help for system not implemented yet");
+        }
+    }
+    #handleLoginCall(details) {
+        if (details[0] !== "admin") {
+            terminal.error(`Unknown username: ${details[0]}`);
+        } else if (details[1] !== "admin") {
+            terminal.error("Wrong password");
+        } else {
+            terminal.setUserName("admin", "adminOS");
+            terminal.log("You are now logged in as admin");
         }
     }
 }

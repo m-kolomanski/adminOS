@@ -1,7 +1,5 @@
 class Terminal {
     constructor() {
-        console.log("Initializing terminal...")
-
         this.termial_container = document.getElementById("terminal-container");
         
         this.termial_container.innerHTML = `
@@ -48,8 +46,6 @@ class Terminal {
                     bubbles: true,
                     detail: command_details
                 }));
-
-
             } 
         });
     }
