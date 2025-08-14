@@ -28,12 +28,14 @@ jobs:
           npm install
 
       - name: Build the site
-        run: npm run build
+        run: |
+          npm run build
+          cp index.html out/index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          publish_dir: .
+          publish_dir: out
           github_token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
