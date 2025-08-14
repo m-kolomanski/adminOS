@@ -1,0 +1,26 @@
+{
+  "name": "adminos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx esbuild src/System.ts --bundle --minify --outfile=dist/bundle.js",
+    "dev": "npx esbuild src/System.ts --bundle --outfile=dist/bundle.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-kolomanski/adminOS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/m-kolomanski/adminOS/issues"
+  },
+  "homepage": "https://github.com/m-kolomanski/adminOS#readme",
+  "devDependencies": {
+    "esbuild": "^0.25.9",
+    "typescript": "^5.9.2"
+  }
+}
