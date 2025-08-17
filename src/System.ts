@@ -2,6 +2,16 @@ import { Terminal } from "./os/Terminal";
 import { Theme } from "./os/Theme";
 import { CommandDetails } from "./os/CommandDetails";
 
+interface OsMetadata {
+  name: string;
+  version: string;
+  release_date: string;
+  author: string;
+  changelog: string;
+  link: string;
+  bug_reports: string;
+}
+
 /**
  * Main system class that manages the adminOS components and command handling.
  */
@@ -9,7 +19,15 @@ class System{
   public TERMINAL: Terminal;
   public THEME: Theme;
   private registered_commands: Array<string> = new Array();
-  private version = "0.1.0"
+  private os_metadata: OsMetadata = {
+    name: "adminOS",
+    version: "0.1.0",
+    release_date: "2025-08-14",
+    author: "@m-kolomanski",
+    changelog: "https://github.com/m-kolomanski/adminOS/blob/main/CHANGELOG.md",
+    link: "https://github.com/m-kolomanski/adminOS",
+    bug_reports: "https://github.com/m-kolomanski/adminOS/issues"
+  };
 
   /**
    * Initializes the system by creating terminal and theme instances and registering default command handlers.
@@ -19,8 +37,8 @@ class System{
     this.TERMINAL.setUser("guest");
 
     this.TERMINAL.log([
-      `adminOS v${this.version} initialized.`,
-      "Author: @m-kolomanski",
+      `adminOS v${this.os_metadata.version} initialized.`,
+      `Author: ${this.os_metadata.author}`,
       "",
       "Welcome, guest!",
       "OS has limited functionality. Please log in to gain access to advanced features."
@@ -77,6 +95,7 @@ class System{
    */
   private registerHandlers(): void {
     this.registerCommandHandler("help", this.handleHelpCall.bind(this));
+    this.registerCommandHandler("system", this.handleSystemCall.bind(this));
   }
 
   /**
@@ -103,6 +122,54 @@ class System{
     }
 
     this.dispatchEvent(detail.input.command, {input: {}, flags: ["help"]});
+  }
+
+  /**
+   * @method handleSystemCall
+   * Handles the 'system' command execution, displaying info about the system.
+   * @param detail - Command details/arguments
+   */
+  private handleSystemCall(detail: CommandDetails): void {
+    if (detail.flags.includes("help")) {
+      this.TERMINAL.log([
+        "Displays information about the adminOS.",
+        "You can display specific information by providing the key as a flag:",
+        "system -version",
+        `${"\u00A0".repeat(14)}-release_date`,
+        `${"\u00A0".repeat(14)}-author`,
+        `${"\u00A0".repeat(14)}-changelog`,
+        `${"\u00A0".repeat(14)}-link`,
+        `${"\u00A0".repeat(14)}-bug_reports`,
+        "Any input variables are ignored."
+      ]);
+      return;
+    }
+
+    if (detail.flags.length !== 0) {
+      const valid_flags = Object.keys(this.os_metadata);
+      const invalid_flags = detail.flags.filter(flag => !valid_flags.includes(flag));
+      if (invalid_flags.length > 0) {
+        this.TERMINAL.error(`Invalid flags: ${invalid_flags.join(", ")}`);
+        return;
+      }
+
+      const requested_info: Array<string> = detail.flags.map(flag => {
+        return `${flag}: ${this.os_metadata[flag as keyof OsMetadata]}`;
+      })
+
+      this.TERMINAL.log(requested_info);
+      return;
+    }
+
+    this.TERMINAL.log([
+      `adminOS`,
+      `Version: ${this.os_metadata.version}`,
+      `Release Date: ${this.os_metadata.release_date}`,
+      `Author: ${this.os_metadata.author}`,
+      `Changelong: ${this.os_metadata.changelog}`,
+      `Link: ${this.os_metadata.link}`,
+      `Bug Reports: ${this.os_metadata.bug_reports}`
+    ]);
   }
 };
 
