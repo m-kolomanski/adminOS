@@ -1,3 +1,5 @@
+import { CommandDetails } from "./CommandDetails";
+
 declare const SYSTEM: any;
 
 /**
@@ -152,17 +154,39 @@ export class Terminal {
   private executeCommand(command: string): void {
     const command_parts: Array<string> = command.split(" ");
     const command_name: string = command_parts[0];
-    const command_details: Array<string> = command_parts.slice(1, command_parts.length);
+    const command_details: CommandDetails = this.parseDetails(command_parts.slice(1, command_parts.length));
 
     if (!SYSTEM.getRegisteredCommands().includes(command_name)) {
       this.error(`Command not found: ${command_name}`);
       return;
     }
 
-    document.dispatchEvent(new CustomEvent(command_name, {
-      bubbles: true,
-      detail: command_details
-    }))
+    SYSTEM.dispatchEvent(command_name, command_details);
+  }
+
+  /**
+   * @method parseDetails
+   * Parses command details from an array of strings.
+   * @param {Array<string>} details - The array of strings to parse
+   * @returns {Object<Array<string>>} The parsed command details
+   */
+  private parseDetails(details: Array<string>): CommandDetails {
+    const parsed: CommandDetails = {
+      input: {},
+      flags: []
+    };
+    details.forEach(detail => {
+      if (detail.startsWith("-")) {
+        parsed.flags.push(detail.replace(/^-+/, ""));
+      } else {
+        const [key, value] = detail.split("=");
+        if (key && value) {
+          parsed.input[key.trim()] = value.trim();
+        }
+      }
+
+    });
+    return parsed;
   }
 
   /**

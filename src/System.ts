@@ -1,5 +1,6 @@
 import { Terminal } from "./os/Terminal";
 import { Theme } from "./os/Theme";
+import { CommandDetails } from "./os/CommandDetails";
 
 /**
  * Main system class that manages the adminOS components and command handling.
@@ -60,11 +61,22 @@ class System{
   }
 
   /**
+   * @method dispatchEvent
+   * Dispatches event for a given command.
+   */
+  public dispatchEvent(command: string, detail: CommandDetails): void {
+    document.dispatchEvent(new CustomEvent(command, {
+      bubbles: true,
+      detail: detail
+    }));
+  }
+
+  /**
    * @method registerHandlers
    * Registers default system command handlers.
    */
   private registerHandlers(): void {
-    this.registerCommandHandler("help", this.handleHelpCall.bind(this))
+    this.registerCommandHandler("help", this.handleHelpCall.bind(this));
   }
 
   /**
@@ -72,10 +84,25 @@ class System{
    * Handles the 'help' command execution.
    * @param detail - Command details/arguments
    */
-  private handleHelpCall(detail: any): void {
-    this.TERMINAL.warning([
-      "No help has been implemented yet"
-    ])
+  private handleHelpCall(detail: CommandDetails): void {
+    const invalid_usage = Object.keys(detail.input).length !== 1 ||
+      !Object.keys(detail.input).includes("command");
+
+    if (invalid_usage) {
+      this.TERMINAL.log([
+        "Responsible for displaying help / manual info for given command.",
+        "Usage:",
+        "help command=<command_name>",
+      ]);
+      return;
+    }
+
+    if (!this.registered_commands.includes(detail.input.command)) {
+      this.TERMINAL.error(`Command not found: ${detail.input.command}`);
+      return;
+    }
+
+    this.dispatchEvent(detail.input.command, {input: {}, flags: ["help"]});
   }
 };
 
