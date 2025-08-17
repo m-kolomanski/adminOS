@@ -21,8 +21,8 @@ class System{
   private registered_commands: Array<string> = new Array();
   private os_metadata: OsMetadata = {
     name: "adminOS",
-    version: "0.1.0",
-    release_date: "2025-08-14",
+    version: "0.2.0-dev",
+    release_date: "the future",
     author: "@m-kolomanski",
     changelog: "https://github.com/m-kolomanski/adminOS/blob/main/CHANGELOG.md",
     link: "https://github.com/m-kolomanski/adminOS",
